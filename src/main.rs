@@ -22,8 +22,7 @@ fn main() -> ExitCode {
 
     let nvm_version = match get_nvm_node_version(args.directory.as_deref()) {
         Ok(result) => result,
-        Err(e) => {
-            eprintln!("Error: {e}");
+        Err(_e) => {
             return ExitCode::from(1);
         }
     };
