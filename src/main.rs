@@ -8,7 +8,7 @@ use cli::parse_cli_args;
 use node::get_current_node_version;
 use nvmrc::{
     confirm_switch_node_version, get_nvm_node_version, is_node_version_matching, is_nvm_installed,
-    resolve_nvm_version, switch_node_version,
+    resolve_nvm_version,
 };
 
 fn main() -> ExitCode {
@@ -48,7 +48,7 @@ fn main() -> ExitCode {
 
     if args.check_only {
         if is_correct_node_version {
-            println!(
+            eprintln!(
                 "✅ You are using the correct Node.js version.\n\
              Current version: {node_version}\n\
              Required version: {nvm_version}"
@@ -66,16 +66,10 @@ fn main() -> ExitCode {
 
     if !args.auto_switch {
         if !confirm_switch_node_version(&nvm_version) {
-            println!("Skipping switch to {nvm_version}");
             return ExitCode::from(0);
         }
     }
 
-    match switch_node_version(&nvm_version) {
-        Err(err) => {
-            eprintln!("{err}");
-            return ExitCode::from(1);
-        }
-        Ok(_) => return ExitCode::from(0),
-    }
+    println!("nvm use {}", nvm_version);
+    ExitCode::from(0)
 }

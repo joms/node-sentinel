@@ -24,38 +24,13 @@ pub fn get_nvm_node_version(dir: Option<&str>) -> Result<String, String> {
     }
 }
 
-pub fn switch_node_version(version: &str) -> Result<(), String> {
-    let nvm_script_path = "$HOME/.nvm/nvm.sh";
-    let shell_cmd = format!(". {}; nvm use {}", nvm_script_path, version);
-
-    println!("{shell_cmd}");
-
-    let output = Command::new("sh")
-        .arg("-c")
-        .arg(shell_cmd)
-        .output()
-        .map_err(|e| format!("Failed to execute shell command: {}", e))?;
-
-    if output.status.success() {
-        println!("Switched to Node version {}", version);
-        Ok(())
-    } else {
-        let stderr = String::from_utf8_lossy(&output.stderr);
-        let stdout = String::from_utf8_lossy(&output.stdout);
-        Err(format!(
-            "Node version switch failed:\nstdout: {}\nstderr: {}",
-            stdout, stderr
-        ))
-    }
-}
-
 pub fn confirm_switch_node_version(version: &str) -> bool {
-    print!("Switch to node version {}? (y/n): ", version);
+    eprint!("Switch to node version {}? [y/N]: ", version);
     io::stdout().flush().unwrap();
 
     let mut input = String::new();
     io::stdin().read_line(&mut input).unwrap();
-    input.trim().to_lowercase() == "y"
+    matches!(input.trim().to_lowercase().as_str(), "y" | "yes")
 }
 
 fn get_lts_version() -> Result<Version, String> {
